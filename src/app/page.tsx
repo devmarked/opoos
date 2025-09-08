@@ -12,8 +12,6 @@ export default function Home() {
 
   return (
     <div>
-      <DisclaimerModal isOpen={isModalOpen} onClose={closeModal} />
-
       {/* Hero Section */}
       <section className="py-20 px-6 bg-background">
         <div className="max-w-7xl mx-auto">

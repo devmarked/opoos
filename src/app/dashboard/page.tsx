@@ -159,11 +159,6 @@ export default function Page() {
         <RecentActivity activity={sampleActivity} isLoading={false} />
       </div>
       
-      {/* Projects Data Table */}
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight mb-4">Active Projects</h2>
-        <DataTable data={projectData} />
-      </div>
     </div>
   )
 }
