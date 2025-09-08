@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import jwt from 'jsonwebtoken'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -187,7 +188,6 @@ async function triggerN8nWorkflow(projectId: string, proposalId: string, project
   }
 
   // Create JWT token for authentication
-  const jwt = require('jsonwebtoken')
   const token = jwt.sign(
     { 
       project_id: projectId,
