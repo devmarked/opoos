@@ -1,18 +1,19 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest } from 'next/server'
+import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-  // Temporarily disable Supabase middleware to fix __dirname error
-  // Authentication will be handled in individual API routes and pages
-  
-  return NextResponse.next({ request })
+  return await updateSession(request)
 }
 
 export const config = {
   matcher: [
     /*
-     * Temporarily disable middleware for all routes to fix __dirname error
-     * Authentication will be handled in individual pages and API routes
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
      */
-    // '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
