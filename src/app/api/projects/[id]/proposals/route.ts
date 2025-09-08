@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-// import jwt from 'jsonwebtoken' // Temporarily disabled for Edge Runtime compatibility
+import jwt from 'jsonwebtoken' // Re-enabled for Node.js runtime
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
+// Use Node.js runtime to avoid Edge Runtime __dirname issues
+export const runtime = 'nodejs'
 
 export async function GET(
   request: Request,
@@ -189,8 +191,16 @@ async function triggerN8nWorkflow(projectId: string, proposalId: string, project
     return
   }
 
-  // Create JWT token for authentication - temporarily disabled for Edge Runtime compatibility
-  const token = 'temp-token' // jwt.sign(...) - disabled due to Edge Runtime issues
+  // Create JWT token for authentication
+  const token = jwt.sign(
+    { 
+      project_id: projectId,
+      id: proposalId,
+      timestamp: Date.now()
+    },
+    n8nJwtSecret,
+    { expiresIn: '1h' }
+  )
 
   const payload = {
     project_id: projectId,
