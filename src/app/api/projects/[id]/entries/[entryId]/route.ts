@@ -6,9 +6,10 @@ export const dynamic = 'force-dynamic'
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string; entryId: string } }
+  { params }: { params: Promise<{ id: string; entryId: string }> }
 ) {
   try {
+    const { id: projectId, entryId } = await params
     const supabase = await createClient()
     
     // Get authenticated user
@@ -30,8 +31,8 @@ export async function PUT(
         metadata: body.metadata || {},
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.entryId)
-      .eq('project_id', params.id)
+      .eq('id', entryId)
+      .eq('project_id', projectId)
       .select()
       .single()
 
@@ -52,9 +53,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string; entryId: string } }
+  { params }: { params: Promise<{ id: string; entryId: string }> }
 ) {
   try {
+    const { id: projectId, entryId } = await params
     const supabase = await createClient()
     
     // Get authenticated user
@@ -67,8 +69,8 @@ export async function DELETE(
     const { error } = await supabase
       .from('project_entries')
       .delete()
-      .eq('id', params.entryId)
-      .eq('project_id', params.id)
+      .eq('id', entryId)
+      .eq('project_id', projectId)
 
     if (error) {
       console.error('Error deleting entry:', error)
