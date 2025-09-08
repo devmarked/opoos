@@ -4,8 +4,6 @@ import { CreateProjectData } from '@/types'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
-// Use Node.js runtime to avoid Edge Runtime __dirname issues
-export const runtime = 'nodejs'
 
 export async function GET() {
   try {
