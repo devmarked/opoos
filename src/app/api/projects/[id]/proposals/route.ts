@@ -7,9 +7,10 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params
     const supabase = await createClient()
     
     // Get authenticated user
@@ -22,7 +23,7 @@ export async function GET(
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
       .single()
 
@@ -34,7 +35,7 @@ export async function GET(
     const { data: proposals, error } = await supabase
       .from('project_proposals')
       .select('*')
-      .eq('project_id', params.id)
+      .eq('project_id', projectId)
       .order('version', { ascending: false })
 
     if (error) {
@@ -51,9 +52,10 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params
     const supabase = await createClient()
     
     // Get authenticated user
@@ -66,7 +68,7 @@ export async function POST(
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
       .single()
 
@@ -79,12 +81,12 @@ export async function POST(
       supabase
         .from('project_entries')
         .select('*')
-        .eq('project_id', params.id)
+        .eq('project_id', projectId)
         .order('created_at', { ascending: false }),
       supabase
         .from('project_files')
         .select('*')
-        .eq('project_id', params.id)
+        .eq('project_id', projectId)
         .order('created_at', { ascending: false })
     ])
 
@@ -92,7 +94,7 @@ export async function POST(
     const { data: existingProposals, error: versionError } = await supabase
       .from('project_proposals')
       .select('version')
-      .eq('project_id', params.id)
+      .eq('project_id', projectId)
       .order('version', { ascending: false })
       .limit(1)
 
@@ -104,7 +106,7 @@ export async function POST(
     const { data: proposal, error: createError } = await supabase
       .from('project_proposals')
       .insert({
-        project_id: params.id,
+        project_id: projectId,
         user_id: user.id,
         version: nextVersion,
         title: `${project.name} - Proposal v${nextVersion}`,
@@ -143,7 +145,7 @@ export async function POST(
         console.log('✅ Updated proposal status to processing:', proposalId)
 
         // Trigger n8n webhook
-        await triggerN8nWorkflow(params.id, proposalId, {
+        await triggerN8nWorkflow(projectId, proposalId, {
           project: project,
           entries: entriesResult.data || [],
           files: filesResult.data || [],

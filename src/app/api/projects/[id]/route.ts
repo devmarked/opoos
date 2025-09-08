@@ -6,9 +6,10 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params
     const supabase = await createClient()
     
     // Get authenticated user
@@ -21,7 +22,7 @@ export async function GET(
     const { data: project, error } = await supabase
       .from('projects')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
       .single()
 
@@ -42,9 +43,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params
     const supabase = await createClient()
     
     // Get authenticated user
@@ -67,7 +69,7 @@ export async function PUT(
         status: body.status,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
       .select()
       .single()
@@ -89,9 +91,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params
     const supabase = await createClient()
     
     // Get authenticated user
@@ -104,7 +107,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('projects')
       .delete()
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
 
     if (error) {

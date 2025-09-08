@@ -7,9 +7,10 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params
     const supabase = await createClient()
     
     // Get authenticated user
@@ -22,7 +23,7 @@ export async function GET(
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
       .single()
 
@@ -34,7 +35,7 @@ export async function GET(
     const { data: entries, error } = await supabase
       .from('project_entries')
       .select('*')
-      .eq('project_id', params.id)
+      .eq('project_id', projectId)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -51,9 +52,10 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: projectId } = await params
     const supabase = await createClient()
     
     // Get authenticated user
@@ -66,7 +68,7 @@ export async function POST(
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', projectId)
       .eq('user_id', user.id)
       .single()
 
@@ -86,7 +88,7 @@ export async function POST(
     const { data: entry, error } = await supabase
       .from('project_entries')
       .insert({
-        project_id: params.id,
+        project_id: projectId,
         user_id: user.id,
         title: body.title.trim(),
         body: body.body.trim(),
