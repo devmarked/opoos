@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { DynamicBreadcrumb } from '@/components/ui/dynamic-breadcrumb'
 import Header from '@/components/layout/header'
 import Footer from '@/components/layout/footer'
+import AnnouncementBar from '@/components/layout/announcement-bar'
 
 interface ConditionalLayoutProps {
   children: React.ReactNode
@@ -28,6 +29,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
     // Render without sidebar for homepage, but with header and footer
     return (
       <div className="min-h-screen flex flex-col">
+        <AnnouncementBar />
         <Header />
         <main className="flex-1">
           {children}
@@ -42,6 +44,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
     <SidebarProvider>
       <SidebarWrapper />
       <SidebarInset>
+        <AnnouncementBar />
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
